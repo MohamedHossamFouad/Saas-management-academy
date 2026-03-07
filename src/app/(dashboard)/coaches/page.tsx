@@ -1,19 +1,23 @@
 import { Contact, Search } from 'lucide-react';
 import { getCoaches } from '@/app/actions/coaches';
+import { getBranches } from '@/app/actions/branches';
 import AddCoachModal from '@/components/AddCoachModal';
 import EditCoachModal from '@/components/EditCoachModal';
 
 export default async function CoachesPage() {
-  const coaches = await getCoaches();
+  const [coaches, branches] = await Promise.all([
+    getCoaches(),
+    getBranches(),
+  ]);
 
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h2 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">Coaches Management</h2>
-          <p className="text-slate-500 dark:text-slate-400 mt-2">View and manage your academy's coaching staff.</p>
+          <p className="text-slate-500 dark:text-slate-400 mt-2">View and manage your academy&apos;s coaching staff.</p>
         </div>
-        <AddCoachModal />
+        <AddCoachModal branches={branches} />
       </div>
 
       <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm overflow-hidden">
@@ -42,6 +46,9 @@ export default async function CoachesPage() {
                   <th className="px-6 py-3 font-medium">Name</th>
                   <th className="px-6 py-3 font-medium">Email</th>
                   <th className="px-6 py-3 font-medium">Specialty</th>
+                  <th className="px-6 py-3 font-medium">Branch</th>
+                  <th className="px-6 py-3 font-medium">Salary</th>
+                  <th className="px-6 py-3 font-medium">PT Rate</th>
                   <th className="px-6 py-3 font-medium">Status</th>
                   <th className="px-6 py-3 font-medium text-right">Actions</th>
                 </tr>
@@ -54,16 +61,19 @@ export default async function CoachesPage() {
                     </td>
                     <td className="px-6 py-4 text-slate-500">{coach.email}</td>
                     <td className="px-6 py-4 text-slate-500">{coach.specialty || '-'}</td>
+                    <td className="px-6 py-4 text-slate-500">{(coach.branches as any)?.name || '-'}</td>
+                    <td className="px-6 py-4 text-slate-500">${Number(coach.salary || 0).toLocaleString()}</td>
+                    <td className="px-6 py-4 text-slate-500">${Number(coach.pt_session_rate || 0).toLocaleString()}</td>
                     <td className="px-6 py-4">
                       <span className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold capitalize ${coach.status === 'active'
-                          ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-100'
-                          : 'bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-100'
+                        ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-100'
+                        : 'bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-100'
                         }`}>
                         {coach.status}
                       </span>
                     </td>
                     <td className="px-6 py-4 text-right">
-                      <EditCoachModal coach={coach} />
+                      <EditCoachModal coach={coach} branches={branches} />
                     </td>
                   </tr>
                 ))}

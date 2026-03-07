@@ -1,12 +1,14 @@
 import { ClipboardCheck, Clock } from 'lucide-react';
 import { getTodaysSessions, getAttendanceHistory } from '@/app/actions/attendance';
 import { getStudents } from '@/app/actions/students';
+import { getCoaches } from '@/app/actions/coaches';
 import RecordAttendanceModal from '@/components/RecordAttendanceModal';
 
 export default async function AttendancePage() {
-  const [classes, students, history] = await Promise.all([
+  const [classes, students, coaches, history] = await Promise.all([
     getTodaysSessions(),
     getStudents(),
+    getCoaches(),
     getAttendanceHistory(),
   ]);
 
@@ -25,7 +27,7 @@ export default async function AttendancePage() {
             <p className="mt-1 text-slate-500">Create a class first before taking attendance.</p>
           </div>
         ) : (
-          <RecordAttendanceModal classes={classes} students={students} />
+          <RecordAttendanceModal classes={classes} students={students} coaches={coaches} />
         )}
       </div>
 
@@ -46,8 +48,9 @@ export default async function AttendancePage() {
               <tr>
                 <th className="px-6 py-3 font-medium">Student</th>
                 <th className="px-6 py-3 font-medium">Class</th>
+                <th className="px-6 py-3 font-medium">Trainer</th>
                 <th className="px-6 py-3 font-medium">Date</th>
-                <th className="px-6 py-3 font-medium">Time</th>
+                <th className="px-6 py-3 font-medium">Check-in</th>
                 <th className="px-6 py-3 font-medium">Status</th>
               </tr>
             </thead>
@@ -57,26 +60,32 @@ export default async function AttendancePage() {
                   ? `${record.students.first_name} ${record.students.last_name}`
                   : 'Unknown';
                 const className = record.class_sessions?.classes?.name || 'N/A';
+                const trainerName = record.coaches
+                  ? `${(record.coaches as any).first_name} ${(record.coaches as any).last_name}`
+                  : '-';
                 const sessionDate = record.class_sessions?.session_date
                   ? new Date(record.class_sessions.session_date).toLocaleDateString()
                   : 'N/A';
-                const checkInTime = record.created_at
-                  ? new Date(record.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-                  : 'N/A';
+                const checkInTime = record.check_in_time
+                  ? new Date(record.check_in_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                  : record.created_at
+                    ? new Date(record.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                    : 'N/A';
                 const status = record.status || 'unknown';
 
                 return (
                   <tr key={record.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50">
                     <td className="px-6 py-4 font-medium text-slate-900 dark:text-white">{studentName}</td>
                     <td className="px-6 py-4 text-slate-600 dark:text-slate-300">{className}</td>
+                    <td className="px-6 py-4 text-slate-600 dark:text-slate-300">{trainerName}</td>
                     <td className="px-6 py-4 text-slate-600 dark:text-slate-300">{sessionDate}</td>
                     <td className="px-6 py-4 text-slate-600 dark:text-slate-300">{checkInTime}</td>
                     <td className="px-6 py-4">
                       <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${status === 'present'
-                          ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-400'
-                          : status === 'absent'
-                            ? 'bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-400'
-                            : 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-400'
+                        ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-400'
+                        : status === 'absent'
+                          ? 'bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-400'
+                          : 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-400'
                         }`}>
                         {status.charAt(0).toUpperCase() + status.slice(1)}
                       </span>

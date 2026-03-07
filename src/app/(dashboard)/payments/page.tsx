@@ -1,4 +1,4 @@
-import { Wallet, Download, CheckCircle2 } from 'lucide-react';
+import { Wallet, CheckCircle2 } from 'lucide-react';
 import { getPayments } from '@/app/actions/payments';
 import { getStudents } from '@/app/actions/students';
 import AddPaymentModal from '@/components/AddPaymentModal';
@@ -18,9 +18,6 @@ export default async function PaymentsPage() {
           <p className="text-slate-500 dark:text-slate-400 mt-2">Manage transactions and billing history.</p>
         </div>
         <div className="flex gap-2">
-          <button className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none h-10 px-4 py-2 border border-slate-300 bg-transparent hover:bg-slate-100 dark:border-slate-700 dark:hover:bg-slate-800">
-            <Download className="w-4 h-4" /> Export Data
-          </button>
           <AddPaymentModal students={students} />
         </div>
       </div>
@@ -45,6 +42,8 @@ export default async function PaymentsPage() {
                     <th className="px-6 py-3 font-medium">Plan/Item</th>
                     <th className="px-6 py-3 font-medium">Date</th>
                     <th className="px-6 py-3 font-medium">Amount</th>
+                    <th className="px-6 py-3 font-medium">Discount</th>
+                    <th className="px-6 py-3 font-medium">Invoice</th>
                     <th className="px-6 py-3 font-medium">Status</th>
                     <th className="px-6 py-3 font-medium text-right">Actions</th>
                   </tr>
@@ -57,7 +56,9 @@ export default async function PaymentsPage() {
                       </td>
                       <td className="px-6 py-4 text-slate-500">{payment.description}</td>
                       <td className="px-6 py-4 text-slate-500">{new Date(payment.payment_date).toLocaleDateString()}</td>
-                      <td className="px-6 py-4 text-slate-900 dark:text-white font-medium">${payment.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                      <td className="px-6 py-4 text-slate-900 dark:text-white font-medium">${Number(payment.amount).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                      <td className="px-6 py-4 text-slate-500">{Number(payment.discount || 0) > 0 ? `$${Number(payment.discount).toFixed(2)}` : '-'}</td>
+                      <td className="px-6 py-4 text-xs text-slate-400 font-mono">{payment.invoice_number || '-'}</td>
                       <td className="px-6 py-4">
                         <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold capitalize ${payment.status === 'paid'
                           ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-100'

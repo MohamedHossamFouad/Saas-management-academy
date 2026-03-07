@@ -1,83 +1,82 @@
 'use client'
 
-import { useState } from 'react'
-import { Plus, X } from 'lucide-react'
-import { createPlan } from '@/app/actions/memberships'
+import { useState } from 'react';
+import { Plus } from 'lucide-react';
+import { createPlan } from '@/app/actions/memberships';
 
 export default function AddMembershipModal() {
-  const [isOpen, setIsOpen] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
-
-  async function handleSubmit(formData: FormData) {
-    setIsLoading(true)
-    await createPlan(formData)
-    setIsLoading(false)
-    setIsOpen(false)
-  }
+  const [open, setOpen] = useState(false);
 
   return (
     <>
       <button
-        onClick={() => setIsOpen(true)}
-        className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-10 px-4 py-2 bg-[#1337ec] text-white hover:bg-[#1337ec]/90 shadow-sm"
+        onClick={() => setOpen(true)}
+        className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none h-10 px-4 py-2 bg-[#1337ec] text-white hover:bg-[#1337ec]/90 shadow-sm"
       >
-        <Plus className="w-4 h-4" /> Create Plan
+        <Plus className="w-4 h-4" /> Add Plan
       </button>
 
-      {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-          <div className="bg-white dark:bg-slate-900 rounded-xl shadow-lg w-full max-w-md border border-slate-200 dark:border-slate-800 overflow-hidden">
-            <div className="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-800">
-              <h3 className="font-semibold text-lg">Create Membership Plan</h3>
-              <button onClick={() => setIsOpen(false)} className="text-slate-500 hover:text-slate-700 dark:hover:text-slate-300">
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-            <form action={handleSubmit} className="p-4 space-y-4 text-left">
+      {open && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-lg w-full max-w-md p-6 m-4 max-h-[90vh] overflow-y-auto">
+            <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">Add New Membership Plan</h3>
+            <form
+              action={async (formData) => {
+                await createPlan(formData);
+                setOpen(false);
+              }}
+              className="space-y-4"
+            >
               <div className="space-y-2">
-                <label className="text-sm font-medium">Plan Name</label>
-                <input required name="name" placeholder="e.g. Pro Academy" className="w-full h-10 px-3 py-2 rounded-md border border-slate-300 dark:border-slate-700 bg-transparent text-sm focus:outline-none focus:ring-2 focus:ring-[#1337ec]" />
+                <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Plan Name *</label>
+                <input required name="name" className="w-full h-10 px-3 py-2 rounded-md border border-slate-300 dark:border-slate-700 bg-transparent text-sm focus:outline-none focus:ring-2 focus:ring-[#1337ec]" />
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-medium">Description</label>
-                <input required name="description" placeholder="Our most comprehensive package." className="w-full h-10 px-3 py-2 rounded-md border border-slate-300 dark:border-slate-700 bg-transparent text-sm focus:outline-none focus:ring-2 focus:ring-[#1337ec]" />
+                <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Description</label>
+                <input name="description" className="w-full h-10 px-3 py-2 rounded-md border border-slate-300 dark:border-slate-700 bg-transparent text-sm focus:outline-none focus:ring-2 focus:ring-[#1337ec]" />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Price ($)</label>
-                  <input required type="number" step="0.01" name="price" className="w-full h-10 px-3 py-2 rounded-md border border-slate-300 dark:border-slate-700 bg-transparent text-sm focus:outline-none focus:ring-2 focus:ring-[#1337ec]" />
+                  <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Price *</label>
+                  <input required name="price" type="number" step="0.01" min={0} className="w-full h-10 px-3 py-2 rounded-md border border-slate-300 dark:border-slate-700 bg-transparent text-sm focus:outline-none focus:ring-2 focus:ring-[#1337ec]" />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Billing Cycle</label>
+                  <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Billing Cycle</label>
                   <select name="billing_cycle" className="w-full h-10 px-3 py-2 rounded-md border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#1337ec]">
                     <option value="monthly">Monthly</option>
                     <option value="yearly">Yearly</option>
                     <option value="weekly">Weekly</option>
+                    <option value="one-time">One-time</option>
                   </select>
                 </div>
               </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Features (comma separated)</label>
-                <input required name="features" placeholder="Unlimited Classes, 1 Personal Session..." className="w-full h-10 px-3 py-2 rounded-md border border-slate-300 dark:border-slate-700 bg-transparent text-sm focus:outline-none focus:ring-2 focus:ring-[#1337ec]" />
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Number of Classes</label>
+                  <input name="number_of_classes" type="number" defaultValue={0} min={0} className="w-full h-10 px-3 py-2 rounded-md border border-slate-300 dark:border-slate-700 bg-transparent text-sm focus:outline-none focus:ring-2 focus:ring-[#1337ec]" />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Duration (days)</label>
+                  <input name="duration_days" type="number" defaultValue={30} min={1} className="w-full h-10 px-3 py-2 rounded-md border border-slate-300 dark:border-slate-700 bg-transparent text-sm focus:outline-none focus:ring-2 focus:ring-[#1337ec]" />
+                </div>
               </div>
-              <div className="flex items-center space-x-2 pt-2">
-                <input type="checkbox" id="is_popular" name="is_popular" value="true" className="h-4 w-4 rounded border-gray-300 text-[#1337ec] focus:ring-[#1337ec]" />
-                <label htmlFor="is_popular" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                  Mark as "Most Popular"
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Features (comma separated)</label>
+                <input name="features" placeholder="Feature 1, Feature 2" className="w-full h-10 px-3 py-2 rounded-md border border-slate-300 dark:border-slate-700 bg-transparent text-sm focus:outline-none focus:ring-2 focus:ring-[#1337ec]" />
+              </div>
+              <div className="space-y-2">
+                <label className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-300">
+                  <input type="checkbox" name="is_popular" value="true" className="rounded" /> Mark as Popular
                 </label>
               </div>
-              <div className="pt-4 flex justify-end gap-2">
-                <button type="button" onClick={() => setIsOpen(false)} className="px-4 py-2 rounded-md text-sm font-medium border border-slate-300 hover:bg-slate-100 dark:border-slate-700 dark:hover:bg-slate-800">
-                  Cancel
-                </button>
-                <button type="submit" disabled={isLoading} className="px-4 py-2 rounded-md text-sm font-medium bg-[#1337ec] text-white hover:bg-[#1337ec]/90 disabled:opacity-50">
-                  {isLoading ? 'Saving...' : 'Save Plan'}
-                </button>
+              <div className="flex justify-end gap-2 pt-4">
+                <button type="button" onClick={() => setOpen(false)} className="h-10 px-4 py-2 rounded-md text-sm font-medium border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800">Cancel</button>
+                <button type="submit" className="h-10 px-4 py-2 rounded-md text-sm font-medium bg-[#1337ec] text-white hover:bg-[#1337ec]/90">Create Plan</button>
               </div>
             </form>
           </div>
         </div>
       )}
     </>
-  )
+  );
 }

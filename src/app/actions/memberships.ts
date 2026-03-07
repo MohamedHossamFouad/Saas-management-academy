@@ -26,7 +26,6 @@ export async function createPlan(formData: FormData) {
   const { organizationId } = await getUserOrganization();
   const supabase = createClient();
 
-  // Convert features string (comma separated) to array
   const featuresStr = formData.get('features') as string || '';
   const features = featuresStr.split(',').map(f => f.trim()).filter(f => f.length > 0);
 
@@ -37,7 +36,9 @@ export async function createPlan(formData: FormData) {
     price: parseFloat(formData.get('price') as string),
     billing_cycle: formData.get('billing_cycle') as string || 'monthly',
     is_popular: formData.get('is_popular') === 'true',
-    features: features
+    features: features,
+    number_of_classes: parseInt(formData.get('number_of_classes') as string) || 0,
+    duration_days: parseInt(formData.get('duration_days') as string) || 30,
   };
 
   const { error } = await supabase
@@ -57,7 +58,6 @@ export async function updatePlan(id: string, formData: FormData) {
   const { organizationId } = await getUserOrganization();
   const supabase = createClient();
 
-  // Convert features string (comma separated) to array
   const featuresStr = formData.get('features') as string || '';
   const features = featuresStr.split(',').map(f => f.trim()).filter(f => f.length > 0);
 
@@ -67,7 +67,9 @@ export async function updatePlan(id: string, formData: FormData) {
     price: parseFloat(formData.get('price') as string),
     billing_cycle: formData.get('billing_cycle') as string,
     is_popular: formData.get('is_popular') === 'true',
-    features: features
+    features: features,
+    number_of_classes: parseInt(formData.get('number_of_classes') as string) || 0,
+    duration_days: parseInt(formData.get('duration_days') as string) || 30,
   };
 
   const { error } = await supabase
@@ -101,5 +103,50 @@ export async function deletePlan(id: string) {
   }
 
   revalidatePath('/memberships');
+  return { success: true };
+}
+
+export async function assignMembership(studentId: string, planId: string) {
+  const { organizationId } = await getUserOrganization();
+  const supabase = createClient();
+
+  // Get plan details
+  const { data: plan } = await supabase
+    .from('membership_plans')
+    .select('number_of_classes, duration_days, price')
+    .eq('id', planId)
+    .single();
+
+  if (!plan) return { error: 'Plan not found' };
+
+  const startDate = new Date();
+  const endDate = new Date(startDate);
+  endDate.setDate(endDate.getDate() + (plan.duration_days || 30));
+
+  const { error } = await supabase
+    .from('student_memberships')
+    .insert([{
+      organization_id: organizationId,
+      student_id: studentId,
+      plan_id: planId,
+      start_date: startDate.toISOString().split('T')[0],
+      end_date: endDate.toISOString().split('T')[0],
+      status: 'active',
+      remaining_classes: plan.number_of_classes || 0,
+    }]);
+
+  if (error) {
+    console.error("Error assigning membership:", error);
+    return { error: error.message };
+  }
+
+  // Also update remaining_classes on the student record
+  await supabase
+    .from('students')
+    .update({ remaining_classes: plan.number_of_classes || 0 })
+    .eq('id', studentId);
+
+  revalidatePath('/memberships');
+  revalidatePath('/students');
   return { success: true };
 }

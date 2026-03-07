@@ -10,7 +10,10 @@ import {
   CreditCard,
   Wallet,
   Settings,
-  LogOut
+  LogOut,
+  Building2,
+  BarChart3,
+  Calculator,
 } from 'lucide-react';
 import { createClient } from '@/utils/supabase/server';
 
@@ -35,6 +38,9 @@ function DashboardLayoutClient({ children, user }: { children: React.ReactNode; 
     { name: 'Attendance', href: '/attendance', icon: ClipboardCheck },
     { name: 'Memberships', href: '/memberships', icon: CreditCard },
     { name: 'Payments', href: '/payments', icon: Wallet },
+    { name: 'Branches', href: '/branches', icon: Building2 },
+    { name: 'Payroll', href: '/payroll', icon: Calculator },
+    { name: 'Reports', href: '/reports', icon: BarChart3 },
     { name: 'Settings', href: '/settings', icon: Settings },
   ];
 
