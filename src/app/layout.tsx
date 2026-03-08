@@ -1,10 +1,15 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
+import { ThemeProvider } from '@/components/ThemeProvider';
+import { LanguageProvider } from '@/components/LanguageProvider';
 
 const inter = Inter({ subsets: ['latin'] });
 
-import { ThemeProvider } from '@/components/ThemeProvider';
+export const metadata: Metadata = {
+  title: 'ArenaOS — Sports Academy Management',
+  description: 'Manage your sports academy with ArenaOS',
+};
 
 export default function RootLayout({
   children,
@@ -20,7 +25,9 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <LanguageProvider>
+            {children}
+          </LanguageProvider>
         </ThemeProvider>
       </body>
     </html>
