@@ -73,7 +73,7 @@ export default function Home() {
       <div className="max-w-6xl mx-auto px-6 pb-16 text-center">
         <div className="inline-flex items-center gap-2 text-sm text-slate-400">
           <Shield className="w-4 h-4" />
-          Secured with Supabase Row Level Security &bull; Multi-tenant data isolation
+          Secured with Supabasee Row Level Security &bull; Multi-tenant data isolation
         </div>
       </div>
     </main>
