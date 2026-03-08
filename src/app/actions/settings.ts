@@ -53,5 +53,6 @@ export async function updateOrganizationSettings(formData: FormData) {
     return;
   }
 
-  revalidatePath('/', 'layout');
+  revalidatePath('/settings');
+  revalidatePath('/dashboard');
 }

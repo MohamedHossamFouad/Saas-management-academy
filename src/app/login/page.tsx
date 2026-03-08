@@ -1,12 +1,16 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { login, signup } from './actions'
+import { useSearchParams } from 'next/navigation'
+import Link from 'next/link'
+import { login } from './actions'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
   const [rememberMe, setRememberMe] = useState(false)
   const [isMounted, setIsMounted] = useState(false)
+  const searchParams = useSearchParams()
+  const message = searchParams.get('message')
 
   useEffect(() => {
     setIsMounted(true)
@@ -30,9 +34,15 @@ export default function LoginPage() {
     <div className="flex items-center justify-center min-h-screen bg-slate-50 dark:bg-slate-950">
       <div className="w-full max-w-md p-8 space-y-6 bg-white dark:bg-slate-900 rounded-xl shadow-lg border border-slate-200 dark:border-slate-800">
         <div className="text-center space-y-2">
-          <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">Apex Academy</h1>
+          <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">ArenaOS</h1>
           <p className="text-sm text-slate-500 dark:text-slate-400">Sign in to manage your sports academy</p>
         </div>
+
+        {message && (
+          <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3 text-sm text-blue-700 dark:text-blue-300">
+            {message}
+          </div>
+        )}
 
         {isMounted && (
           <form className="space-y-4 text-slate-900 dark:text-white">
@@ -46,7 +56,7 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="flex h-10 w-full rounded-md border border-slate-300 dark:border-slate-700 bg-transparent px-3 py-2 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#1337ec]"
-                placeholder="admin@apexacademy.com"
+                placeholder="admin@academy.com"
               />
             </div>
             <div className="space-y-2">
@@ -80,15 +90,16 @@ export default function LoginPage() {
               >
                 Sign In
               </button>
-              <button
-                formAction={(formData) => handleAction(formData, signup)}
-                className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-10 px-4 py-2 border border-slate-300 bg-transparent hover:bg-slate-100 dark:border-slate-700 dark:hover:bg-slate-800"
-              >
-                Sign Up
-              </button>
             </div>
           </form>
         )}
+
+        <div className="text-center text-sm text-slate-500">
+          Don&apos;t have an account?{' '}
+          <Link href="/signup" className="text-[#1337ec] hover:underline font-medium">
+            Create Academy
+          </Link>
+        </div>
       </div>
     </div>
   )

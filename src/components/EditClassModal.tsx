@@ -3,26 +3,17 @@
 import { useState } from 'react'
 import { Edit, X, Trash2 } from 'lucide-react'
 import { updateClass, deleteClass } from '@/app/actions/classes'
+import ConfirmDeleteDialog from '@/components/ConfirmDeleteDialog'
 
 export default function EditClassModal({ cls, coaches }: { cls: any, coaches: any[] }) {
   const [isOpen, setIsOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-  const [isDeleting, setIsDeleting] = useState(false)
 
   async function handleSubmit(formData: FormData) {
     setIsLoading(true)
     await updateClass(cls.id, formData)
     setIsLoading(false)
     setIsOpen(false)
-  }
-
-  async function handleDelete() {
-    if (confirm("Are you sure you want to delete this class?")) {
-      setIsDeleting(true)
-      await deleteClass(cls.id)
-      setIsDeleting(false)
-      setIsOpen(false)
-    }
   }
 
   return (
@@ -75,10 +66,19 @@ export default function EditClassModal({ cls, coaches }: { cls: any, coaches: an
                 </select>
               </div>
               <div className="pt-4 flex items-center justify-between">
-                <button type="button" onClick={handleDelete} disabled={isDeleting} className="inline-flex items-center px-4 py-2 rounded-md text-sm font-medium text-red-600 hover:bg-red-50 dark:hover:bg-red-950 transition-colors">
-                  <Trash2 className="w-4 h-4 mr-2" />
-                  {isDeleting ? '...' : 'Delete'}
-                </button>
+                <ConfirmDeleteDialog
+                  title="Delete Class"
+                  message={`Are you sure you want to delete "${cls.name}"? This action cannot be undone.`}
+                  onConfirm={async () => {
+                    await deleteClass(cls.id);
+                    setIsOpen(false);
+                  }}
+                >
+                  <button type="button" className="inline-flex items-center px-4 py-2 rounded-md text-sm font-medium text-red-600 hover:bg-red-50 dark:hover:bg-red-950 transition-colors">
+                    <Trash2 className="w-4 h-4 mr-2" />
+                    Delete
+                  </button>
+                </ConfirmDeleteDialog>
                 <div className="flex gap-2">
                   <button type="button" onClick={() => setIsOpen(false)} className="px-4 py-2 rounded-md text-sm font-medium border border-slate-300 hover:bg-slate-100 dark:border-slate-700 dark:hover:bg-slate-800">
                     Cancel

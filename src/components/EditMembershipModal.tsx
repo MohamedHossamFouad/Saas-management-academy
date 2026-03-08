@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Pencil, Trash2 } from 'lucide-react';
 import { updatePlan, deletePlan } from '@/app/actions/memberships';
+import ConfirmDeleteDialog from '@/components/ConfirmDeleteDialog';
 
 export default function EditMembershipModal({ plan }: { plan: any }) {
   const [open, setOpen] = useState(false);
@@ -70,18 +71,18 @@ export default function EditMembershipModal({ plan }: { plan: any }) {
                 </label>
               </div>
               <div className="flex justify-between items-center pt-4">
-                <button
-                  type="button"
-                  onClick={async () => {
-                    if (confirm('Are you sure you want to delete this plan?')) {
-                      await deletePlan(plan.id);
-                      setOpen(false);
-                    }
+                <ConfirmDeleteDialog
+                  title="Delete Plan"
+                  message={`Are you sure you want to delete the "${plan.name}" plan? This action cannot be undone.`}
+                  onConfirm={async () => {
+                    await deletePlan(plan.id);
+                    setOpen(false);
                   }}
-                  className="inline-flex items-center gap-1.5 text-sm text-red-600 hover:text-red-700"
                 >
-                  <Trash2 className="w-4 h-4" /> Delete
-                </button>
+                  <button type="button" className="inline-flex items-center gap-1.5 text-sm text-red-600 hover:text-red-700">
+                    <Trash2 className="w-4 h-4" /> Delete
+                  </button>
+                </ConfirmDeleteDialog>
                 <div className="flex gap-2">
                   <button type="button" onClick={() => setOpen(false)} className="h-10 px-4 py-2 rounded-md text-sm font-medium border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800">Cancel</button>
                   <button type="submit" className="h-10 px-4 py-2 rounded-md text-sm font-medium bg-[#1337ec] text-white hover:bg-[#1337ec]/90">Save Changes</button>
