@@ -14,9 +14,9 @@ export default function Home() {
           </div>
 
           <h1 className="text-5xl md:text-6xl font-bold text-slate-900 dark:text-white tracking-tight leading-tight">
-            Manage Your Academy
+            <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">ArenaOS</span>
             <br />
-            <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Like a Pro</span>
+            Manage Your Academy Like a Pro
           </h1>
 
           <p className="mt-6 text-lg text-slate-500 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed">

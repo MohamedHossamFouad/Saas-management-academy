@@ -49,7 +49,7 @@ function DashboardLayoutClient({ children, user }: { children: React.ReactNode; 
       {/* Sidebar */}
       <aside className="w-64 border-r dark:border-slate-800 border-slate-200 rtl:border-l rtl:border-r-0 bg-white dark:bg-slate-900 flex flex-col pt-6 shrink-0 z-10 transition-colors duration-200">
         <div className="px-6 mb-8 text-left rtl:text-right">
-          <h1 className="text-xl font-bold text-[#1337ec] dark:text-blue-400 font-sans tracking-tight">Apex Academy</h1>
+          <h1 className="text-xl font-bold text-[#1337ec] dark:text-blue-400 font-sans tracking-tight">ArenaOS</h1>
           <p className="text-xs text-slate-500 mt-1 uppercase tracking-wider font-semibold">Management</p>
         </div>
 
