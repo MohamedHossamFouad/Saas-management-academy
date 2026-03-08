@@ -20,7 +20,7 @@ export default function Home() {
           </h1>
 
           <p className="mt-6 text-lg text-slate-500 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed">
-            Streamline student management, class scheduling, attendance tracking, membership plans, and payments — all in one powerful dashboard.
+            Streamline student management, class scheduling, attendance tracking, membership plans, and payments &mdash; all in one powerful dashboard.
           </p>
 
           <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -73,7 +73,7 @@ export default function Home() {
       <div className="max-w-6xl mx-auto px-6 pb-16 text-center">
         <div className="inline-flex items-center gap-2 text-sm text-slate-400">
           <Shield className="w-4 h-4" />
-          Secured with Supabase Row Level Security • Multi-tenant data isolation
+          Secured with Supabase Row Level Security &bull; Multi-tenant data isolation
         </div>
       </div>
     </main>
